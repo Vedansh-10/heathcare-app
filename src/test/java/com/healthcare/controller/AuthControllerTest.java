@@ -1,12 +1,17 @@
 package com.healthcare.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.healthcare.config.RateLimitConfig;
+import com.healthcare.config.SecurityConfig;
 import com.healthcare.dto.request.AuthRequest;
 import com.healthcare.dto.response.ApiResponse;
 import com.healthcare.entity.User;
 import com.healthcare.security.JwtAuthenticationFilter;
 import com.healthcare.security.JwtService;
+import com.healthcare.security.UserDetailsServiceImpl;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import com.healthcare.service.AuthService;
+import com.healthcare.util.RateLimitFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +34,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(
         controllers = AuthController.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
+//        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class),
+        includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RateLimitConfig.class, RateLimitFilter.class, SecurityConfig.class, JwtAuthenticationFilter.class})
 )
+
+@MockBean(JpaMetamodelMappingContext.class)
 @DisplayName("AuthController Web Layer Tests")
 class AuthControllerTest {
 
@@ -39,6 +47,7 @@ class AuthControllerTest {
 
     @MockBean AuthService authService;
     @MockBean JwtService jwtService;
+    @MockBean UserDetailsServiceImpl userDetailsService;
 
     private ApiResponse.AuthResponse mockAuthResponse() {
         var userResp = new ApiResponse.UserResponse(

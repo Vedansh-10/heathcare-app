@@ -1,11 +1,15 @@
 package com.healthcare.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.healthcare.config.RateLimitConfig;
+import com.healthcare.config.SecurityConfig;
 import com.healthcare.dto.request.ChatRequest;
 import com.healthcare.dto.response.ApiResponse;
 import com.healthcare.security.JwtAuthenticationFilter;
 import com.healthcare.security.JwtService;
+import com.healthcare.security.UserDetailsServiceImpl;
 import com.healthcare.service.ChatService;
+import com.healthcare.util.RateLimitFilter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,8 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(
         controllers = ChatController.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
+//        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class),
+        includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {RateLimitConfig.class, RateLimitFilter.class, SecurityConfig.class, JwtAuthenticationFilter.class})
 )
+
+@MockBean(JpaMetamodelMappingContext.class)
 @DisplayName("ChatController Web Layer Tests")
 class ChatControllerTest {
 
@@ -40,6 +48,8 @@ class ChatControllerTest {
 
     @MockBean ChatService chatService;
     @MockBean JwtService jwtService;
+    @MockBean
+    UserDetailsServiceImpl userDetailsService;
 
     @Test
     @WithMockUser(username = "test@example.com")

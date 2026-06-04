@@ -67,7 +67,7 @@ class ChatServiceTest {
         var request = new ChatRequest.SendMessageRequest("I have a headache", "sess-1", "en");
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
         when(emergencyDetectionService.detect(anyString())).thenReturn(EmergencyDetectionService.EmergencyResult.safe());
-        when(chatRepository.findTop10ByUserIdOrderByCreatedAtDesc(any())).thenReturn(List.of());
+//        when(chatRepository.findTop10ByUserIdOrderByCreatedAtDesc(any())).thenReturn(List.of());
         when(aiService.chat(anyString(), any(), anyString())).thenReturn("Rest and stay hydrated.");
         when(chatRepository.save(any())).thenReturn(testChat);
 

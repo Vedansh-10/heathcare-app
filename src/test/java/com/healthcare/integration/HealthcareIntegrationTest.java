@@ -47,7 +47,7 @@ class HealthcareIntegrationTest {
 
         ChatClient mockClient = chatClientBuilder.build();
         when(mockClient.prompt()).thenReturn(mockCall);
-        when(mockCall.messages(any())).thenReturn(mockCall);
+        when(mockCall.messages()).thenReturn(mockCall);
         when(mockCall.call()).thenReturn(mockCallResponse);
         when(mockCallResponse.content()).thenReturn("{"
                 + "\"assessment\":\"You may have a common cold.\","
